@@ -11,7 +11,7 @@
 
 //   const loadMovies = async () => {
 //     try {
-//       const res = await axios.get(`http://localhost:5000/api/movies?page=${page}&limit=5`);
+//       const res = await axios.get(`https://movies-list-be-1.onrender.com/api/movies?page=${page}&limit=5`);
 //       const data = res.data.data || res.data;
 //       if (data.length === 0) setHasMore(false);
 
@@ -40,7 +40,7 @@
 
 //   const handleDelete = async (id) => {
 //     if (window.confirm("Are you sure you want to delete this movie?")) {
-//       await axios.delete(`http://localhost:5000/api/movies/${id}`);
+//       await axios.delete(`https://movies-list-be-1.onrender.com/api/movies/${id}`);
 //       setMovies((prev) => prev.filter((m) => m.id !== id));
 //     }
 //   };
@@ -68,7 +68,7 @@ function Home() {
 
   const loadMovies = async () => {
     try {
-      const res = await axios.get(`http://localhost:5000/api/movies?page=${page}&limit=5`);
+      const res = await axios.get(`https://movies-list-be-1.onrender.com/api/movies?page=${page}&limit=5`);
       const data = res.data.data || res.data;
       if (data.length === 0) setHasMore(false);
 
@@ -97,7 +97,7 @@ function Home() {
 
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this movie?")) {
-      await axios.delete(`http://localhost:5000/api/movies/${id}`);
+      await axios.delete(`https://movies-list-be-1.onrender.com/api/movies/${id}`);
       setMovies((prev) => prev.filter((m) => m.id !== id));
     }
   };

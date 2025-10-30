@@ -30,7 +30,7 @@
 //     Object.keys(form).forEach((key) => {
 //       if (form[key] !== null) data.append(key, form[key]);
 //     });
-//     await axios.post("http://localhost:5000/api/movies", data, {
+//     await axios.post("https://movies-list-be-1.onrender.com/api/movies", data, {
 //       headers: { "Content-Type": "multipart/form-data" },
 //     });
 //     navigate("/");
@@ -152,7 +152,7 @@ function AddMovie() {
     Object.keys(form).forEach((key) => {
       if (form[key] !== null) data.append(key, form[key]);
     });
-    await axios.post("http://localhost:5000/api/movies", data, {
+    await axios.post("https://movies-list-be-1.onrender.com/api/movies", data, {
       headers: { "Content-Type": "multipart/form-data" },
     });
     navigate("/");

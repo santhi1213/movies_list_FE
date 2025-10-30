@@ -19,7 +19,7 @@
 
 //   useEffect(() => {
 //     axios
-//       .get(`http://localhost:5000/api/movies/${id}`)
+//       .get(`https://movies-list-be-1.onrender.com/api/movies/${id}`)
 //       .then((res) => {
 //         setForm({
 //           ...res.data,
@@ -49,7 +49,7 @@
 //         data.append(key, form[key]);
 //       }
 //     });
-//     await axios.put(`http://localhost:5000/api/movies/${id}`, data, {
+//     await axios.put(`https://movies-list-be-1.onrender.com/api/movies/${id}`, data, {
 //       headers: { "Content-Type": "multipart/form-data" },
 //     });
 //     navigate("/");
@@ -168,7 +168,7 @@ function EditMovie() {
 
   useEffect(() => {
     axios
-      .get(`http://localhost:5000/api/movies/${id}`)
+      .get(`https://movies-list-be-1.onrender.com/api/movies/${id}`)
       .then((res) => {
         setForm({
           ...res.data,
@@ -198,7 +198,7 @@ function EditMovie() {
         data.append(key, form[key]);
       }
     });
-    await axios.put(`http://localhost:5000/api/movies/${id}`, data, {
+    await axios.put(`https://movies-list-be-1.onrender.com/api/movies/${id}`, data, {
       headers: { "Content-Type": "multipart/form-data" },
     });
     navigate("/");
