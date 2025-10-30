@@ -47,7 +47,7 @@
 
 //   return (
 //     <div>
-//       <h1 className="text-2xl mb-4 font-bold text-cyan-400">Favorite Movies / Shows</h1>
+//       <h1 className="text-3xl mb-6 font-bold text-gray-800">🎬 Favorite Movies / Shows</h1>
 //       <MovieTable movies={movies} onEdit={(id) => navigate(`/edit/${id}`)} onDelete={handleDelete} />
 //     </div>
 //   );
@@ -55,7 +55,7 @@
 
 // export default Home;
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import MovieTable from "../components/MovieTable";
 import { useNavigate } from "react-router-dom";
@@ -71,11 +71,7 @@ function Home() {
       const res = await axios.get(`https://movies-list-be-1.onrender.com/api/movies?page=${page}&limit=5`);
       const data = res.data.data || res.data;
       if (data.length === 0) setHasMore(false);
-
-      setMovies((prev) => {
-        if (page === 1) return data;
-        return [...prev, ...data.filter(m => !prev.some(p => p.id === m.id))];
-      });
+      setMovies((prev) => (page === 1 ? data : [...prev, ...data]));
     } catch (err) {
       console.error(err);
     }
@@ -96,8 +92,16 @@ function Home() {
   }, [hasMore]);
 
   const handleDelete = async (id) => {
+    if (!localStorage.getItem("token")) {
+      alert("Please login to delete movies!");
+      navigate("/login");
+      return;
+    }
+
     if (window.confirm("Are you sure you want to delete this movie?")) {
-      await axios.delete(`https://movies-list-be-1.onrender.com/api/movies/${id}`);
+      await axios.delete(`https://movies-list-be-1.onrender.com/api/movies/${id}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      });
       setMovies((prev) => prev.filter((m) => m.id !== id));
     }
   };
@@ -111,4 +115,3 @@ function Home() {
 }
 
 export default Home;
-

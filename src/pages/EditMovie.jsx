@@ -56,16 +56,16 @@
 //   };
 
 //   return (
-//     <div className="max-w-xl mx-auto bg-gray-800 rounded-xl p-10 shadow-xl">
-//       <h1 className="text-3xl font-bold text-center text-yellow-400 mb-6">
-//         Edit Movie / TV Show
+//     <div className="max-w-xl mx-auto bg-white rounded-2xl p-10 shadow-lg border border-gray-300">
+//       <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">
+//         ✏️ Edit Movie / TV Show
 //       </h1>
 //       <form onSubmit={handleSubmit} className="space-y-4">
 //         {preview && (
 //           <img
 //             src={preview}
 //             alt="Poster Preview"
-//             className="w-32 h-40 mx-auto rounded shadow mb-2 object-cover"
+//             className="w-32 h-40 mx-auto rounded-lg shadow-md mb-3 object-cover border border-gray-300"
 //           />
 //         )}
 //         <input
@@ -74,68 +74,39 @@
 //           placeholder="Title"
 //           value={form.title}
 //           onChange={handleChange}
-//           className="w-full p-3 rounded bg-gray-900 text-white border border-yellow-700"
+//           className="w-full p-3 rounded bg-gray-50 text-gray-800 border border-gray-300 focus:ring-2 focus:ring-gray-400"
 //           required
 //         />
 //         <select
 //           name="type"
 //           value={form.type}
 //           onChange={handleChange}
-//           className="w-full p-3 rounded bg-gray-900 text-white border border-yellow-700"
+//           className="w-full p-3 rounded bg-gray-50 text-gray-800 border border-gray-300"
 //         >
 //           <option value="Movie">Movie</option>
 //           <option value="TV Show">TV Show</option>
 //         </select>
-//         <input
-//           type="text"
-//           name="director"
-//           placeholder="Director"
-//           value={form.director}
-//           onChange={handleChange}
-//           className="w-full p-3 rounded bg-gray-900 text-white border border-yellow-700"
-//         />
-//         <input
-//           type="text"
-//           name="budget"
-//           placeholder="Budget"
-//           value={form.budget}
-//           onChange={handleChange}
-//           className="w-full p-3 rounded bg-gray-900 text-white border border-yellow-700"
-//         />
-//         <input
-//           type="text"
-//           name="location"
-//           placeholder="Location"
-//           value={form.location}
-//           onChange={handleChange}
-//           className="w-full p-3 rounded bg-gray-900 text-white border border-yellow-700"
-//         />
-//         <input
-//           type="text"
-//           name="duration"
-//           placeholder="Duration"
-//           value={form.duration}
-//           onChange={handleChange}
-//           className="w-full p-3 rounded bg-gray-900 text-white border border-yellow-700"
-//         />
-//         <input
-//           type="text"
-//           name="year"
-//           placeholder="Year"
-//           value={form.year}
-//           onChange={handleChange}
-//           className="w-full p-3 rounded bg-gray-900 text-white border border-yellow-700"
-//         />
+//         {["director", "budget", "location", "duration", "year"].map((f) => (
+//           <input
+//             key={f}
+//             type="text"
+//             name={f}
+//             placeholder={f[0].toUpperCase() + f.slice(1)}
+//             value={form[f]}
+//             onChange={handleChange}
+//             className="w-full p-3 rounded bg-gray-50 text-gray-800 border border-gray-300"
+//           />
+//         ))}
 //         <input
 //           type="file"
 //           name="poster"
 //           accept="image/*"
 //           onChange={handleImageChange}
-//           className="w-full"
+//           className="w-full text-gray-700"
 //         />
 //         <button
 //           type="submit"
-//           className="w-full bg-yellow-500 hover:bg-yellow-600 p-3 rounded font-bold shadow text-black"
+//           className="w-full bg-gray-800 hover:bg-gray-700 text-white p-3 rounded font-semibold shadow transition"
 //         >
 //           Update Movie
 //         </button>
@@ -145,7 +116,6 @@
 // }
 
 // export default EditMovie;
-
 
 import { useEffect, useState } from "react";
 import axios from "axios";
@@ -167,20 +137,19 @@ function EditMovie() {
   });
 
   useEffect(() => {
-    axios
-      .get(`https://movies-list-be-1.onrender.com/api/movies/${id}`)
+    if (!localStorage.getItem("token")) navigate("/login");
+  }, [navigate]);
+
+  useEffect(() => {
+    axios.get(`https://movies-list-be-1.onrender.com/api/movies/${id}`)
       .then((res) => {
-        setForm({
-          ...res.data,
-          poster: null,
-        });
+        setForm({ ...res.data, poster: null });
         setPreview(res.data.poster_url);
       })
       .catch(console.error);
   }, [id]);
 
-  const handleChange = (e) =>
-    setForm({ ...form, [e.target.name]: e.target.value });
+  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -193,76 +162,35 @@ function EditMovie() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const data = new FormData();
-    Object.keys(form).forEach((key) => {
-      if (form[key] !== null && form[key] !== undefined) {
-        data.append(key, form[key]);
-      }
-    });
+    Object.keys(form).forEach((key) => form[key] && data.append(key, form[key]));
+
     await axios.put(`https://movies-list-be-1.onrender.com/api/movies/${id}`, data, {
-      headers: { "Content-Type": "multipart/form-data" },
+      headers: {
+        "Content-Type": "multipart/form-data",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
     });
     navigate("/");
   };
 
   return (
     <div className="max-w-xl mx-auto bg-white rounded-2xl p-10 shadow-lg border border-gray-300">
-      <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">
-        ✏️ Edit Movie / TV Show
-      </h1>
+      <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">✏️ Edit Movie / TV Show</h1>
       <form onSubmit={handleSubmit} className="space-y-4">
-        {preview && (
-          <img
-            src={preview}
-            alt="Poster Preview"
-            className="w-32 h-40 mx-auto rounded-lg shadow-md mb-3 object-cover border border-gray-300"
-          />
-        )}
-        <input
-          type="text"
-          name="title"
-          placeholder="Title"
-          value={form.title}
-          onChange={handleChange}
-          className="w-full p-3 rounded bg-gray-50 text-gray-800 border border-gray-300 focus:ring-2 focus:ring-gray-400"
-          required
-        />
-        <select
-          name="type"
-          value={form.type}
-          onChange={handleChange}
-          className="w-full p-3 rounded bg-gray-50 text-gray-800 border border-gray-300"
-        >
+        {preview && <img src={preview} alt="Poster" className="w-32 h-40 mx-auto rounded-lg shadow-md mb-3 object-cover border" />}
+        <input type="text" name="title" placeholder="Title" value={form.title} onChange={handleChange} className="w-full p-3 rounded bg-gray-50 border border-gray-300" required />
+        <select name="type" value={form.type} onChange={handleChange} className="w-full p-3 rounded bg-gray-50 border border-gray-300">
           <option value="Movie">Movie</option>
           <option value="TV Show">TV Show</option>
         </select>
         {["director", "budget", "location", "duration", "year"].map((f) => (
-          <input
-            key={f}
-            type="text"
-            name={f}
-            placeholder={f[0].toUpperCase() + f.slice(1)}
-            value={form[f]}
-            onChange={handleChange}
-            className="w-full p-3 rounded bg-gray-50 text-gray-800 border border-gray-300"
-          />
+          <input key={f} type="text" name={f} placeholder={f[0].toUpperCase() + f.slice(1)} value={form[f]} onChange={handleChange} className="w-full p-3 rounded bg-gray-50 border border-gray-300" />
         ))}
-        <input
-          type="file"
-          name="poster"
-          accept="image/*"
-          onChange={handleImageChange}
-          className="w-full text-gray-700"
-        />
-        <button
-          type="submit"
-          className="w-full bg-gray-800 hover:bg-gray-700 text-white p-3 rounded font-semibold shadow transition"
-        >
-          Update Movie
-        </button>
+        <input type="file" name="poster" accept="image/*" onChange={handleImageChange} className="w-full text-gray-700" />
+        <button type="submit" className="w-full bg-gray-800 hover:bg-gray-700 text-white p-3 rounded font-semibold transition">Update Movie</button>
       </form>
     </div>
   );
 }
 
 export default EditMovie;
-
